@@ -17,7 +17,7 @@
 それが いちばん いい テストデータです。
 
 フィードバック窓口はこちら！👇️
-- Webサイト[ozkk.jp](https://ozkk.jp/) にあるメールアドレス
+- Webサイト [ozkk.jp](https://ozkk.jp/) にあるメールアドレス
 - Xアカウント [@ozata92](https://x.com/ozata92)
 
 ---
