@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>おねがいラボ — AIのくせずかん</title>
+</head>
+<body>
+<!-- ARTIFACT-START -->
+<style>
+{{STYLE}}
+</style>
+
+<header><div class="bar">
+  <div class="logo">おねがい<span>ラボ</span> 🧪</div>
+  <div id="starcount">⭐0</div>
+  <button id="zkbtn">くせずかん</button>
+</div></header>
+<main id="app" class="wrap"></main>
+<div id="zkmodal"><div class="sheet">
+  <div class="zk-title">🗂️ AIの くせずかん</div>
+  <div id="zklist"></div>
+  <button class="btn btn-sub" id="zkclose">とじる</button>
+</div></div>
+<div id="toast" role="status"></div>
+<footer>おねがいラボ v0.1.7（1しょう）— つうしん なし・データしゅうしゅう なし ／ 13さいみまんの ためのAIれんしゅうちょう</footer>
+
+<script>
+'use strict';
+{{DATA}}
+{{ENGINE}}
+</script>
+<!-- ARTIFACT-END -->
+</body>
+</html>
