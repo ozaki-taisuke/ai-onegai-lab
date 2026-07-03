@@ -8,7 +8,7 @@
 
 ## やってみよう！
 
-> いますぐあそぶ！ 👉️ [おねがいラボ](https://ozaki-taisuke.github.io/ai-onegai-lab/)
+> 💡 いますぐあそぶ！ 👉️ [おねがいラボ](https://ozaki-taisuke.github.io/ai-onegai-lab/)
 
 - **なにを まなぶ？** AIとの つきあいかた——いってないことは つたわらない、
   ふわっと たのむと かってに あなうめされる、さいごに きめるのは きみ
