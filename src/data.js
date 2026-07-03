@@ -28,13 +28,13 @@ const LEVELS = [
   goalTitle:'おかあさんの たんじょうび！ ケーキを よういしたい',
   goalArt:'👩🎂🕯️',
   goalNote:'<b>テーブルに のる ふつうの おおきさ</b>の ケーキが ほしいな',
-  aidaIntro:'はじめまして！ ぼく、おてつだいAIの <b>アイナ</b>！ したの「ことばタイル」を タップして、ぼくに おねがいしてね！',
+  aidaIntro:'はじめまして！ ぼく、おてつだいAIの <b>アイナ</b>！ うえの <b>おだいカード</b>を よく みて、したの「ことばタイル」で ぼくに おねがいしてね！',
   slots:4,
   tiles:[
     {id:'cake', t:'ケーキを'},
     {id:'sugoi', t:'とびきり すごいのを'},
     {id:'make', t:'つくって'},
-    {id:'size', t:'テーブルに のる おおきさで', late:true},
+    {id:'size', t:'テーブルに のる おおきさで'},
   ],
   eval(s){
     if(!s.has('make')) return 'noverb';
@@ -55,9 +55,9 @@ const LEVELS = [
     tiny:{kind:'fail', art:'<span class="e2">🔍</span><span class="e3">🎂</span><span class="e2">🐜</span>',
       aida:'できました！ ……おおきさを きいて なかったので、アリさんサイズに して みました！',
       cap:'ちいさすぎる ケーキが きた'},
-    success:{kind:'success', art:'<span class="e1">🎂</span><span class="e2">👩💕</span>',
-      aida:'テーブルに ぴったり！ おたんじょうび おめでとうございます！',
-      cap:'だいせいこう！'},
+    success:{kind:'success', art:'<span class="e1">🎂</span><span class="e2">🕯️👩💕</span>',
+      aida:'テーブルに ぴったり！ おたんじょうび おめでとうございます！ ……ちなみに <b>ろうそくの かずは きいてなかった</b>から、100ぽん さしといたよ！ たりる？',
+      cap:'だいせいこう！（ろうそくは……まあ、ごあいきょう）'},
   },
   reason:{pre:'', b1:{lb:'なにを つたえて なかった？',
       choices:['おおきさ','いろ','おかねの こと'], ok:0},
@@ -65,7 +65,7 @@ const LEVELS = [
     b2:{lb:'どう なっちゃった？',
       choices:['へんな おおきさの ケーキが きた','ケーキが こなかった','アイナが ないちゃった'], ok:0},
     post:'。'},
-  afterReason:'あたらしい ことばタイルが ふえたよ！ もういちど おねがい してみよう！',
+  afterReason:'そうそう！ 「おおきさ」みたいな <b>どのくらい</b>の ことばが あると、アイナは まちがえようが ないんだ。もういちど おねがい してみよう！',
   quirk:1,
 },
 { // LV2 かいもの

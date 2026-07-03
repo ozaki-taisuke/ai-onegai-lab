@@ -86,7 +86,7 @@ function showCompose(i,notice){
   '<div class="note">'+L.goalNote+'</div></div>'+
   ainaBub(notice||L.aidaIntro)+
   '<div class="slots" id="slots"></div>'+
-  '<div class="slotcount">タイルは <b>'+L.slots+'まい</b>まで（はずすときは うえの タイルを タップ）</div>'+
+  '<div class="slotcount">タイルは <b>'+Math.min(L.slots,visibleTiles(L).length)+'まい</b>まで（はずすときは うえの タイルを タップ）</div>'+
   '<div class="tray" id="tray"></div>'+
   '<button class="btn btn-go" id="go" disabled>おねがいする！</button>');
   drawTiles(i);
@@ -216,6 +216,7 @@ function showSuccess(i,preHtml){
   render(preHtml+
   '<div class="resh win">だいせいこう！！</div>'+
   '<div class="stars">'+'⭐'.repeat(stars)+'<span style="opacity:.25">'+'⭐'.repeat(3-stars)+'</span></div>'+
+  (S.asks===1?'<div class="calib">✨ <b>いちどで つたわった！</b> おねがい名人の そしつ あり！</div>':'')+
   quirkCard(L.quirk,isNew)+
   '<button class="btn btn-go" id="next">'+(i+1<LEVELS.length?'つぎの おだいへ！':'けっかを みる！')+'</button>');
   on('#next',()=>startLevel(i+1));

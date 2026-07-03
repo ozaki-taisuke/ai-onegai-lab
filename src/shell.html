@@ -1,46 +1,44 @@
 <!doctype html>
 <html lang="ja">
-
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>おねがいラボ — AIのくせずかん</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>おねがいラボ — AIのくせずかん</title>
+<meta name="description" content="ことばタイルで おてつだいAI「アイナ」に おねがいして、AIのくせを ずかんに あつめるゲーム。13歳未満のための、生成AIとのつきあいかた練習帳。通信なし・データ収集なし・無料。">
+<meta property="og:title" content="おねがいラボ — AIのくせずかん">
+<meta property="og:description" content="ことばタイルでAIにおねがい。「いわれたとおり」って、ちょっとこわい。13歳未満のためのAI練習帳（おとなも1回はハッとする）">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://ozaki-taisuke.github.io/ai-onegai-lab/">
+<meta property="og:image" content="https://ozaki-taisuke.github.io/ai-onegai-lab/ogp.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#EAF4FB">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🤖</text></svg>">
 </head>
-
 <body>
-  <!-- ARTIFACT-START -->
-  <style>
-    {
-        {
-        STYLE
-      }
-    }
-  </style>
+<!-- ARTIFACT-START -->
+<style>
+{{STYLE}}
+</style>
 
-  <header>
-    <div class="bar">
-      <div class="logo">おねがい<span>ラボ</span> 🧪</div>
-      <div id="starco unt">⭐0</div>
-      <button id="zkbtn">くせずかん</button>
-    </div>
-  </header>
-  <main id="app" class="wrap"></main>
-  <div id="zkmodal">
-    <div class="sheet">
-      <div class="zk-title">🗂️ AIの くせずかん</div>
-      <div id="zklist"></div>
-      <button class="btn btn-sub" id="zkclose">とじる</button>
-    </div>
-  </div>
-  <div id="toast" role="status"></div>
-  <footer>おねがいラボ v0.1.7（1しょう）— つうしん なし・データしゅうしゅう なし ／ 13さいみまんの ためのAIれんしゅうちょう</footer>
+<header><div class="bar">
+  <div class="logo">おねがい<span>ラボ</span> 🧪</div>
+  <div id="starcount">⭐0</div>
+  <button id="zkbtn">くせずかん</button>
+</div></header>
+<main id="app" class="wrap"></main>
+<div id="zkmodal"><div class="sheet">
+  <div class="zk-title">🗂️ AIの くせずかん</div>
+  <div id="zklist"></div>
+  <button class="btn btn-sub" id="zkclose">とじる</button>
+</div></div>
+<div id="toast" role="status"></div>
+<footer>おねがいラボ v0.1.10（1しょう）— つうしん なし・データしゅうしゅう なし ／ 13さいみまんの ためのAIれんしゅうちょう</footer>
 
-  <script>
-    'use strict';
-    { { DATA } }
-    { { ENGINE } }
-  </script>
-  <!-- ARTIFACT-END -->
+<script>
+'use strict';
+{{DATA}}
+{{ENGINE}}
+</script>
+<!-- ARTIFACT-END -->
 </body>
-
 </html>

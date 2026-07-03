@@ -189,7 +189,7 @@
   <button class="btn btn-sub" id="zkclose">とじる</button>
 </div></div>
 <div id="toast" role="status"></div>
-<footer>おねがいラボ v0.1.8（1しょう）— つうしん なし・データしゅうしゅう なし ／ 13さいみまんの ためのAIれんしゅうちょう</footer>
+<footer>おねがいラボ v0.1.10（1しょう）— つうしん なし・データしゅうしゅう なし ／ 13さいみまんの ためのAIれんしゅうちょう</footer>
 
 <script>
 'use strict';
@@ -223,13 +223,13 @@ const LEVELS = [
   goalTitle:'おかあさんの たんじょうび！ ケーキを よういしたい',
   goalArt:'👩🎂🕯️',
   goalNote:'<b>テーブルに のる ふつうの おおきさ</b>の ケーキが ほしいな',
-  aidaIntro:'はじめまして！ ぼく、おてつだいAIの <b>アイナ</b>！ したの「ことばタイル」を タップして、ぼくに おねがいしてね！',
+  aidaIntro:'はじめまして！ ぼく、おてつだいAIの <b>アイナ</b>！ うえの <b>おだいカード</b>を よく みて、したの「ことばタイル」で ぼくに おねがいしてね！',
   slots:4,
   tiles:[
     {id:'cake', t:'ケーキを'},
     {id:'sugoi', t:'とびきり すごいのを'},
     {id:'make', t:'つくって'},
-    {id:'size', t:'テーブルに のる おおきさで', late:true},
+    {id:'size', t:'テーブルに のる おおきさで'},
   ],
   eval(s){
     if(!s.has('make')) return 'noverb';
@@ -250,9 +250,9 @@ const LEVELS = [
     tiny:{kind:'fail', art:'<span class="e2">🔍</span><span class="e3">🎂</span><span class="e2">🐜</span>',
       aida:'できました！ ……おおきさを きいて なかったので、アリさんサイズに して みました！',
       cap:'ちいさすぎる ケーキが きた'},
-    success:{kind:'success', art:'<span class="e1">🎂</span><span class="e2">👩💕</span>',
-      aida:'テーブルに ぴったり！ おたんじょうび おめでとうございます！',
-      cap:'だいせいこう！'},
+    success:{kind:'success', art:'<span class="e1">🎂</span><span class="e2">🕯️👩💕</span>',
+      aida:'テーブルに ぴったり！ おたんじょうび おめでとうございます！ ……ちなみに <b>ろうそくの かずは きいてなかった</b>から、100ぽん さしといたよ！ たりる？',
+      cap:'だいせいこう！（ろうそくは……まあ、ごあいきょう）'},
   },
   reason:{pre:'', b1:{lb:'なにを つたえて なかった？',
       choices:['おおきさ','いろ','おかねの こと'], ok:0},
@@ -260,7 +260,7 @@ const LEVELS = [
     b2:{lb:'どう なっちゃった？',
       choices:['へんな おおきさの ケーキが きた','ケーキが こなかった','アイナが ないちゃった'], ok:0},
     post:'。'},
-  afterReason:'あたらしい ことばタイルが ふえたよ！ もういちど おねがい してみよう！',
+  afterReason:'そうそう！ 「おおきさ」みたいな <b>どのくらい</b>の ことばが あると、アイナは まちがえようが ないんだ。もういちど おねがい してみよう！',
   quirk:1,
 },
 { // LV2 かいもの
@@ -656,7 +656,7 @@ function showCompose(i,notice){
   '<div class="note">'+L.goalNote+'</div></div>'+
   ainaBub(notice||L.aidaIntro)+
   '<div class="slots" id="slots"></div>'+
-  '<div class="slotcount">タイルは <b>'+L.slots+'まい</b>まで（はずすときは うえの タイルを タップ）</div>'+
+  '<div class="slotcount">タイルは <b>'+Math.min(L.slots,visibleTiles(L).length)+'まい</b>まで（はずすときは うえの タイルを タップ）</div>'+
   '<div class="tray" id="tray"></div>'+
   '<button class="btn btn-go" id="go" disabled>おねがいする！</button>');
   drawTiles(i);
@@ -786,6 +786,7 @@ function showSuccess(i,preHtml){
   render(preHtml+
   '<div class="resh win">だいせいこう！！</div>'+
   '<div class="stars">'+'⭐'.repeat(stars)+'<span style="opacity:.25">'+'⭐'.repeat(3-stars)+'</span></div>'+
+  (S.asks===1?'<div class="calib">✨ <b>いちどで つたわった！</b> おねがい名人の そしつ あり！</div>':'')+
   quirkCard(L.quirk,isNew)+
   '<button class="btn btn-go" id="next">'+(i+1<LEVELS.length?'つぎの おだいへ！':'けっかを みる！')+'</button>');
   on('#next',()=>startLevel(i+1));
