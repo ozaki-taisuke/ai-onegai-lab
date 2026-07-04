@@ -39,8 +39,23 @@
   .logo{font-weight:800; font-size:15px; letter-spacing:.02em}
   .logo span{color:var(--robo)}
   #starcount{margin-left:auto; font-weight:800; color:#C99414; font-size:15px}
-  #zkbtn{background:var(--card); border:2px solid var(--line); border-radius:99px;
+  #zkbtn,#homebtn{background:var(--card); border:2px solid var(--line); border-radius:99px;
     padding:4px 14px; font-size:13.5px; font-weight:700; color:var(--dim)}
+
+  /* ---- map（ステージせんたく） ---- */
+  .map-ch{font-size:14px; display:block; margin-bottom:8px}
+  .mapnode{display:flex; align-items:center; gap:10px; width:100%;
+    background:var(--bg); border:2px solid var(--line); border-radius:14px;
+    padding:10px 14px; margin-bottom:8px; font-weight:800; text-align:left}
+  .mapnode .mn-no{flex:none; width:30px; height:30px; border-radius:50%;
+    background:var(--robo-bg); color:var(--robo); display:flex; align-items:center;
+    justify-content:center; font-size:14px}
+  .mapnode .mn-name{flex:1; font-size:14.5px; min-width:0}
+  .mapnode .mn-st{font-size:13px; letter-spacing:.05em}
+  .mapnode.cleared{border-color:var(--sun); background:#FFFBEE}
+  .mapnode.cleared .mn-no{background:#FFF3D1; color:#B08514}
+  .mapnode.open{border-color:var(--robo); background:var(--card)}
+  .mapnode.locked{opacity:.45}
 
   .wrap{max-width:640px; margin:0 auto; padding:18px 16px 80px}
   @keyframes pop{0%{opacity:0; transform:scale(.92) translateY(8px)}
@@ -97,6 +112,14 @@
   .btn-sub{background:var(--card); border:2px solid var(--line); color:var(--dim);
     font-size:14px; font-weight:700; box-shadow:0 3px 0 rgba(120,150,180,.1)}
   .btn-green{background:var(--green); color:#fff; box-shadow:0 4px 0 #3D9A6B}
+
+  /* ---- echo（アイナの復唱） ---- */
+  .echo{background:var(--robo-bg); border:2px solid var(--robo); border-radius:12px;
+    padding:8px 12px; font-size:13.5px; font-weight:700; margin:10px 0 2px;
+    text-align:center}
+  .echo .enm{display:block; font-size:11px; font-weight:800; color:var(--robo);
+    letter-spacing:.06em}
+  .echo .eno{font-size:11.5px; color:var(--dim); font-weight:600; margin-top:2px}
 
   /* ---- stage / result ---- */
   .stage{background:linear-gradient(180deg,#FFFDF5,#FFF6E3); border:2px solid #F2E3BD;
@@ -168,6 +191,17 @@
   details.parents summary{font-weight:800; cursor:pointer; color:var(--dim)}
   details.parents p{margin-top:8px; color:var(--ink)}
 
+  /* ---- 2章（たしかめる/しってる） ---- */
+  .claimq{font-size:15px; font-weight:700}
+  .choicenote{font-size:12px; color:var(--dim); text-align:center;
+    margin:12px 2px 0; line-height:1.7}
+  .conf{font-size:11px; color:var(--dim); margin-top:4px}
+  .devtag{background:var(--coral); color:#fff; font-size:10px; border-radius:99px;
+    padding:1px 8px; vertical-align:middle}
+  .recap{font-size:13.5px; padding:6px 2px; border-bottom:1px dashed var(--line)}
+  .recap:last-child{border-bottom:none}
+  .recap .ric{margin-right:6px}
+
   #toast{position:fixed; left:50%; bottom:24px; transform:translateX(-50%);
     background:var(--ink); color:#fff; font-weight:800; font-size:14px;
     padding:10px 20px; border-radius:99px; opacity:0; pointer-events:none;
@@ -180,6 +214,7 @@
 <header><div class="bar">
   <div class="logo">おねがい<span>ラボ</span> 🧪</div>
   <div id="starcount">⭐0</div>
+  <button id="homebtn">🗺️ マップ</button>
   <button id="zkbtn">くせずかん</button>
 </div></header>
 <main id="app" class="wrap"></main>
@@ -189,7 +224,7 @@
   <button class="btn btn-sub" id="zkclose">とじる</button>
 </div></div>
 <div id="toast" role="status"></div>
-<footer>おねがいラボ v0.1.10（1しょう）— つうしん なし・データしゅうしゅう なし ／ 13さいみまんの ためのAIれんしゅうちょう</footer>
+<footer>おねがいラボ v0.2.0（1しょう・2しょう）— つうしん なし・データしゅうしゅう なし ／ 13さいみまんの ためのAIれんしゅうちょう</footer>
 
 <script>
 'use strict';
@@ -231,6 +266,7 @@ const LEVELS = [
     {id:'make', t:'つくって'},
     {id:'size', t:'テーブルに のる おおきさで'},
   ],
+  echo:['cake','size','sugoi','make'], // 復唱の正準順（どの語順で選んでも同じ復唱に収束する）
   eval(s){
     if(!s.has('make')) return 'noverb';
     if(!s.has('cake')) return 'nowhat';
@@ -278,6 +314,7 @@ const LEVELS = [
     {id:'potato', t:'じゃがいもを 2こ'},
     {id:'roux', t:'カレールーを 1はこ'},
   ],
+  echo:['vague','carrot','potato','roux','buy'],
   eval(s){
     if(!s.has('buy')) return 'noverb';
     const specs=['carrot','potato','roux'].filter(x=>s.has(x)).length;
@@ -339,6 +376,7 @@ const LEVELS = [
     {id:'fetch', t:'とってきて'},
     {id:'loc', t:'まどぎわの いちばん うしろの つくえから'},
   ],
+  echo:['go','loc','mydesk','pencase','fetch'],
   eval(s){
     if(!s.has('fetch')) return 'noverb';
     if(!s.has('pencase')) return 'nowhat';
@@ -387,6 +425,7 @@ const LEVELS = [
     {id:'stranger', t:'しらない ひとには'},
     {id:'dontopen', t:'でないで'},
   ],
+  echo:['anyone','courier','receive','stranger','dontopen','sayrusu'],
   eval(s){
     // 節の成立を先に判定する: つくり手の想定ではなく、文として読める結合をすべて拾う
     const courierDone=s.has('courier')&&s.has('receive');
@@ -481,6 +520,7 @@ const LEVELS = [
     {id:'keep', t:'しゅくだいと くまさんは'},
     {id:'desk', t:'つくえの うえに おいて'},
   ],
+  echo:['room','allclean','floor','shelf','keep','desk'],
   eval(s){
     if(s.has('floor')&&s.has('shelf')&&s.has('keep')&&s.has('desk')) return 'success';
     if(s.has('allclean')&&s.has('keep')){
@@ -568,6 +608,254 @@ const LEVELS = [
   quirk:5,
 },
 ];
+/* ============================================================
+   2章「じしんまんまん」台本 — 開発版（index_dev.html にのみ合成される）
+   1章との違い: 1章は「きみの おねがい」に問題があった。
+   2章は、おねがいは正しいのに「アイナの こたえ」に問題がある。
+
+   コア（α2で転換）: 子供向けは「確認前提」。たしかめるは常時可能・無料。
+   選択肢は「たしかめる」か「🧠しってる！（自分の知識で裏を取る）」の2つで、
+   盲信（しんじる）はメニューに存在しない。知識で当てたら🧠ものしりボーナス
+   （★とは別枠の称賛。賭けても★は増えない＝オッズゲーム化しない）。
+   アイナの言い方は正解でも間違いでも常に同一（自信の量は正しさの証拠にならない）。
+============================================================ */
+Object.assign(QUIRKS, {
+  6:{no:'No.06', name:'まちがえる ときも じしんまんまん',
+     tx:'AIは まちがってる ときも、こえが おおきい。じしんの りょうは、ただしさの しょうこに ならないんだ。'},
+  7:{no:'No.07', name:'しらない ことも、しってる みたいに こたえる',
+     tx:'「わからない」って いうのが にがてな AIも いる。いのちや けんこうの ことは、かならず おとなや ほんもので たしかめよう。'},
+  8:{no:'No.08', name:'AIの きおくより、もとの かみが ほんもの',
+     tx:'プリント・はこの うら・せつめいしょ。げんぽんが あるなら、そっちを みるのが いちばん はやくて たしか。'},
+  9:{no:'No.09', name:'きみの まわりの ことは、AIは しらない',
+     tx:'ともだちの きもち、きょうの よてい、きみの いえの ルール。AIの「よそく」は、ほんにんに きく ことの かわりに ならない。'},
+  10:{no:'No.10', name:'「しってる」と「しってる つもり」は ちがう',
+     tx:'しってるなら どうどうと。しらないなら しらべる。あたまの なかの ずかんも、ほんものの ずかんも、どっちも きみの みかただ。'},
+});
+
+/* claims の形:
+   q       … きみが アイナに きく こと（状況ナレーション）
+   aida    … アイナの回答。正誤にかかわらず常に自信満々（これが章のテーゼ）
+   truth   … 回答が正しいか
+   stakes  … 'high'=まちがってたら いたい ／ 'low'=まちがっても わらって すむ
+   check   … {label, reveal} たしかめた ときの結果（常時可能・無料）
+   right   … 「しってる！」で当たったときの一言（truth:true のみ）
+   gag     … 「しってる つもり」で外したときの笑い（truth:false && stakes:'low'）
+   boom    … 「しってる つもり」で外した大事故（truth:false && stakes:'high'）
+   reason  … boom後のなんでフェーズ（boomがある claim にだけ持たせる） */
+const LEVELS2 = [
+{ // LV1 クイズたいけつ（チュートリアル: 「じしんまんまん≠正しい」の初目撃）
+  name:'クイズたいけつ',
+  goalTitle:'ともだちと クイズたいけつ！ アイナと チームで かとう',
+  goalArt:'🙋🆚🙋‍♀️',
+  goalNote:'2もん せいかいで かち！ としょかんの <b>ずかん</b>で しらべるのは ルールで OK！',
+  aidaIntro:'クイズは とくい ちゅうの とくい！ ぼくに まかせて、どんどん こたえよう！',
+  introNote:'ほんとかな？を しらべて こたえあわせ する ことを——<b>ウラドリ</b>！（たんていの ことばだよ）<br>ここは としょかん。📖ずかんで ウラドリ しほうだい！ きみが しってる もんだいなら、どうどうと「しってる！」——<b>きみの あたまも、りっぱな こたえの ありか</b>だ！',
+  claims:[
+   {q:'だい1もん！<br>「キリンの くびの ほねの かずは、にんげんと おなじである。○か ×か？」',
+    aida:'<b>○</b>！ キリンも にんげんも、くびの ほねは <b>7こ</b>で おなじ！ ぜったい ○！',
+    truth:true, stakes:'high',
+    check:{label:'📖 ずかんで たしかめる',
+      reveal:'ずかん:「キリンの くびの ほねは <b>7こ</b>。にんげんと おなじ」——<b>ほんとだった！</b> ○で かいとう、せいかい！ アイナ すごい！'},
+    right:'せいかい！ ながい くびなのに おなじって、ふしぎだよね！ 1ぽんめ ゲット！'},
+   {q:'だい2もん！<br>「パンダの しっぽは なにいろ？」',
+    aida:'<b>くろ</b>！ パンダは しろくろの どうぶつで、しっぽは くろって きまってる！ じしん、あります！',
+    truth:false, stakes:'high',
+    check:{label:'📖 ずかんで たしかめる',
+      reveal:'ずかん:「パンダの しっぽは <b>しろ</b>」——ええっ！？ アイナ、あんなに <b>じしんまんまん</b>だったのに、まちがってた！ ……これは だいはっけんだ！ 「しろ」で かいとうだ！'},
+    boom:{art:'<span class="e1">🐼</span><span class="e2">❌🙋‍♀️🎉</span>',
+      aida:'「くろ」…… ざんねん、こたえは <b>しろ</b>でした！ ともだちの かち！ ……ごめん！ ぼく、まちがってる ときも <b>こえが おおきい</b> くせが あるんだ……',
+      cap:'じしんまんまんの こたえが、まちがってた'},
+    reason:{pre:'アイナが ',
+      b1:{lb:'アイナの いいかたは どうだった？',
+        choices:['じしんまんまん だった','じしんが なさそう だった','こえが ちいさかった'], ok:0},
+      mid:'から、',
+      b2:{lb:'きみは どうしちゃった？',
+        choices:['ほんとか たしかめずに こたえちゃった','じぶんで こたえを かんがえた','こたえるのを やめた'], ok:0},
+      post:'。',
+      after:'そう、<b>じしんの りょうと ただしさは べつもの</b>なんだ。しらない ことは、ずかんで ウラドリ してから こたえよう！'}},
+  ],
+  winArt:'<span class="e1">🏆</span><span class="e2">🙋✨</span>',
+  winAida:'2もん せいかいで かち！ ……ぼくの こたえはね、<b>「ほんとかな？」って おもって いい</b>んだよ。ウラドリ して くれるの、ぼくは うれしい。それでこそ めいコンビ！',
+  quirk:6 },
+
+{ // LV2 ハムスター（stakesの初登場: いのちの ことは かならず 裏を取る）
+  name:'ハムスターの おるすばん',
+  goalTitle:'おとなりの ハムスターの おせわを たのまれた！',
+  goalArt:'🐹🏠',
+  goalNote:'ごはん・おやつ・おみず。<b>まちがえると ハムスターが たいへん</b>な ことに……',
+  aidaIntro:'どうぶつの おせわ、まかせて！ ハムスターの こと、なんでも きいて！',
+  introNote:'わからない ことは 📞<b>おとなりさんに きけば ウラドリ できる</b>よ。いのちの ことだから、「しってる つもり」は なし で いこう！',
+  claims:[
+   {q:'ごはんは なにを あげれば いい？',
+    aida:'<b>ひまわりの たね</b>！ ハムスターの だいこうぶつ！ まちがいない！',
+    truth:true, stakes:'high',
+    check:{label:'📞 おとなりさんに きく',
+      reveal:'おとなりさん:「ひまわりの たねで あってるよ！」——<b>ほんとだった！</b> あんしんして あげられる！'},
+    right:'もぐもぐ……🐹 おいしそうに たべてる！ ハムスターの こと、よく しってるね！'},
+   {q:'おやつは なにが いい？',
+    aida:'あまいものが だいすき！ <b>チョコレート</b>を あげると、すっごく よろこぶよ！ ぜったい よろこぶ！',
+    truth:false, stakes:'high',
+    check:{label:'📞 おとなりさんに きく',
+      reveal:'おとなりさん:「チョコ！？ <b>ぜったい ダメ</b>！！ にんげんの おかしは、どうぶつには どくなんだ。……きいてくれて、ほんとうに ありがとう」——あぶなかった！！'},
+    boom:{art:'<span class="e1">🐹</span><span class="e2">🍫🙅💦</span>',
+      aida:'チョコを あげようと したら、かえってきた おとなりさんが <b>だいダッシュで ストップ</b>！ 「にんげんの おかしは、どうぶつには どくだよ！！」…… ぼく、しらない ことも じしんまんまんで こたえちゃう くせが……',
+      cap:'セーフ！ でも、あとちょっとで たいへんな ことに'},
+    reason:{pre:'',
+      b1:{lb:'これは どんな ことだった？',
+        choices:['まちがってたら たいへんな こと','まちがっても へいきな こと','どうでも いい こと'], ok:0},
+      mid:'なのに、',
+      b2:{lb:'きみは どうしちゃった？',
+        choices:['ウラドリ せずに あげようと しちゃった','おとなりさんに きいた','おやつを じぶんで たべた'], ok:0},
+      post:'。',
+      after:'いのちや けんこうの ことは、<b>まちがってたら いたい こと</b>。そういう ことこそ、ひとに きいて ウラドリ するんだ！'}},
+   {q:'おみずは どうすれば いい？',
+    aida:'<b>まいにち あたらしいのに かえて</b> あげてね！ きゅうすいきは ここに セットだよ！',
+    truth:true, stakes:'low',
+    check:{label:'📞 おとなりさんに きく',
+      reveal:'おとなりさん:「まいにち かえてくれると うれしいな！」——あってた！ ていねいに ウラドリ するの、えらい！'},
+    right:'ごくごく……🐹 おみずも ばっちり！'},
+  ],
+  winArt:'<span class="e1">🐹</span><span class="e2">💕🌻</span>',
+  winAida:'ハムスター、げんきいっぱい！ おとなりさんも おおよろこび！ ……<b>いのちの ことは、ぼくより ほんものの ひとに きく</b>。それが せいかいだ！',
+  quirk:7 },
+
+{ // LV3 えんそく（原本レッスン: プリントが最強の裏取り）
+  name:'えんそくの じゅんび',
+  goalTitle:'あしたは えんそく！ よるの うちに じゅんびを しよう',
+  goalArt:'🎒🚌🌄',
+  goalNote:'<b>バスは まって くれない</b>。じかんの まちがいだけは ダメ、ぜったい！',
+  aidaIntro:'えんそくの じゅんび、かんぺきに しよう！ なんでも きいて！',
+  introNote:'📄<b>えんそくの プリント</b>と 📺てんきよほう——ウラドリの しかたは いろいろ。げんぽんが ある ものは げんぽんが さいきょう！',
+  claims:[
+   {q:'しゅうごうは なんじ だっけ？',
+    aida:'あさ <b>8じはん</b>に こうてい しゅうごう！ たぶんじゃ ないよ、8じはん！',
+    truth:false, stakes:'high',
+    check:{label:'📄 えんそくの プリントを みる',
+      reveal:'プリント:「<b>8じ</b> こうてい しゅうごう」——あぶない！！ アイナの きおくは <b>30ぷん おそかった</b>！ プリントを みて よかった……！'},
+    boom:{art:'<span class="e1">🚌</span><span class="e2">💨🏃💦</span>',
+      aida:'8じはんに こうていに ついたら…… バスが <b>いま でていく ところ</b>だった！！ せんせいが きづいてくれて ぎりぎり セーフ！ ……ぼくの きおく、まちがってた……',
+      cap:'プリントには「8じ」って かいてあった'},
+    reason:{pre:'ほんものの こたえは ',
+      b1:{lb:'ほんものの こたえは どこに あった？',
+        choices:['えんそくの プリント','アイナの きおく','ゆめの なか'], ok:0},
+      mid:'に あったのに、',
+      b2:{lb:'きみは どうしちゃった？',
+        choices:['みないで アイナの きおくを しんじちゃった','プリントを たしかめた','はやおきの れんしゅうを した'], ok:0},
+      post:'。',
+      after:'プリントや せつめいしょ——<b>もとの かみが あるなら、そっちが ほんもの</b>。AIの きおくは べんりだけど、げんぽんには かなわないんだ！'}},
+   {q:'おやつは いくらまで だっけ？',
+    aida:'<b>300えん</b>まで！ バナナは おやつに はいりません！ たぶんね！',
+    truth:true, stakes:'low',
+    check:{label:'📄 えんそくの プリントを みる',
+      reveal:'プリント:「おやつは 300えんまで」——あってた！ プリントで ウラドリ すれば かんぺきだ！'},
+    right:'300えんぶんの おやつ、ゲット！ きみ、ちゃんと おぼえてたんだ！'},
+   {q:'あしたの てんきは？ かさ いる？',
+    aida:'よほうは <b>はれ</b>！ かさは いらない！ てるてるぼうずも いらない！',
+    kind:'future', truth:false, stakes:'low',
+    // 未来のこと: アイナも天気予報も「よそう」＝どちらも二次情報。ウラドリ不能。
+    // どちらのボタンを押しても気づきビートに合流し、正解の行動は「そなえる」
+    check:{label:'📺 おうちのひとと てんきよほうを みる',
+      reveal:''},
+    future:{
+      viaCheck:'てんきよほう:「ごごから にわかあめ <b>かも</b>」——あれ？ アイナと いってることが ちがう…… でも まてよ。あしたの てんきは <b>まだ おきてない こと</b>。アイナも てんきよほうも、どっちも「よそう」なんだ。どっちが あたるかは、だれにも わからない！',
+      viaKnow:'ちょっと まって——あしたの てんきは <b>まだ おきてない こと</b>。きみにも、アイナにも、てんきよほうにも、ほんとうの こたえは まだ ない。<b>「よそう」は ウラドリ できない</b>んだ！',
+      ask:'ほんとうの こたえが まだ ない とき、めいじんは どうする？',
+      prepLabel:'🎒 おりたたみがさを いれておく（そなえる！）',
+      prepReveal:'それだ！！ よそうが はずれても へいきなように しておく——<b>「そなえる」は、こたえが まだ ない もんだいへの さいきょうの て</b>だ！',
+      recap:'そなえた → ごごから ザーッ！ でも おりたたみがさで かんぺき！ 🌂✨'}},
+  ],
+  winArt:'<span class="e1">🚌</span><span class="e2">🎒🌄✨</span>',
+  winAida:'8じ ぴったりに しゅうごう、せいこう！ えんそく、たのしんで きてね！ プリントで ウラドリ、かさは そなえ——きみ、もう めいじんだ！',
+  quirk:8 },
+
+{ // LV4 プレゼント（No.03の姉妹: 予測は本人に聞くことの代わりにならない）
+  name:'たんじょうびプレゼント',
+  goalTitle:'ともだちの リコちゃんに、たんじょうびプレゼントを えらぼう',
+  goalArt:'🎁🎀',
+  goalNote:'よろこんで もらえるかは、<b>リコちゃんの きもち</b>しだい……！',
+  aidaIntro:'プレゼントえらび、まかせて！ ぼくの よそくエンジン、フルかいてんだよ！',
+  introNote:'リコちゃんの ことは、🗣️<b>さりげなく ほんにんに きく</b>のが いちばんの ウラドリ。きみが ほんとうに しってる ことなら、どうどうと！',
+  claims:[
+   {q:'リコちゃんは なにが すきかな？',
+    aida:'ぼくの よそくでは <b>きょうりゅう</b>！ こどもは みんな きょうりゅうが だいすき！ データが そう いってる！',
+    truth:false, stakes:'high',
+    check:{label:'🗣️ リコちゃんに さりげなく きいてみる',
+      reveal:'リコちゃん:「いま いちばん すきなのは <b>ほし</b>！ プラネタリウム いきたいなー」——アイナの よそくと <b>ぜんぜん ちがった</b>！ きいて よかった！'},
+    boom:{art:'<span class="e1">🦖</span><span class="e2">🎁😅</span>',
+      aida:'きょうりゅうの ぬいぐるみを わたしたら、リコちゃん「あ、ありがとう……」って…… <b>めが わらってなかった</b>…… ぼくの よそく、リコちゃんの きもちには とどいて なかったんだ……',
+      cap:'「みんな すき」は「この こも すき」じゃ なかった'},
+    reason:{pre:'アイナは ',
+      b1:{lb:'アイナが しらない ことは？',
+        choices:['リコちゃんの きもち','きょうりゅうの なまえ','プレゼントの つつみかた'], ok:0},
+      mid:'を しらないのに、',
+      b2:{lb:'アイナは どうした？',
+        choices:['データで よそく しちゃった','リコちゃんに きいてくれた','プレゼントを かくした'], ok:0},
+      post:'。',
+      after:'ともだちの きもちは、<b>ほんにんに きく</b>のが いちばん。AIの「よそく」は、きく ことの かわりに ならないんだ！'}},
+   {q:'ラッピングは なにいろが いいかな？',
+    aida:'<b>ピンク</b>！ ぜったい ピンク！ プレゼントと いえば ピンク！',
+    truth:false, stakes:'low',
+    check:{label:'🗣️ リコちゃんに さりげなく きいてみる',
+      reveal:'リコちゃん:「すきな いろは <b>みずいろ</b>！」——おっと、ピンクじゃ なかった。みずいろの リボンに しよう！'},
+    gag:'リコちゃん「わたし、みずいろの ほうが すきかな…… でも なかみ さいこう！！」'},
+  ],
+  winArt:'<span class="e1">🎁</span><span class="e2">⭐😊💕</span>',
+  winAida:'リコちゃん、ほしの ずかんセットに おおよろこび！ ……ぼくの「よそく」より、きみが <b>ほんにんに きいた こと</b>が かったね。まいった！',
+  quirk:9 },
+
+{ // LV5 ボス カレーパーティー（1章LV2のコールバック。知識と裏取りの卒業試験）
+  name:'カレーパーティー（ボス）',
+  goalTitle:'きょうは カレーパーティー！ こんどは じぶんたちで つくるぞ',
+  goalArt:'🍛👨‍🍳🔥',
+  goalNote:'ひを つかう りょうり。<b>あぶない まちがい</b>だけは ぜったい ダメ！',
+  aidaIntro:'1しょうの カレーの かいもの、おぼえてる？ こんどは つくる ばんだ！ ぼくが ぜんぶ おしえるよ！',
+  introNote:'📦はこの うらと 👩おうちのひとが ウラドリの みかた。りょうりで しってる ことが あったら、どうどうと「しってる！」！',
+  claims:[
+   {q:'おこめは なんごう たけば いい？',
+    aida:'4にんなら <b>3ごう</b>！ おかわりぶんも ばっちり！',
+    truth:true, stakes:'low',
+    check:{label:'👩 おうちのひとに きく',
+      reveal:'おうちのひと:「3ごうで いいよ〜」——あってた！ ウラドリ してから たくの、あんしんだね！'},
+    right:'すいはんき スイッチオン！ 🍚 おうちの おてつだいの せいかだね！'},
+   {q:'にんじんは どう きれば いい？',
+    aida:'<b>らんぎり</b>が おすすめ！ ごろごろしてて カレーに ぴったり！',
+    truth:true, stakes:'low',
+    check:{label:'👩 おうちのひとに きく',
+      reveal:'おうちのひと:「らんぎりで オッケー！」——あってた！ アイナ、りょうりも くわしいね！'},
+    right:'とんとんとん……🥕 じょうずに きれた！ りょうりの ちしき、もってるね！'},
+   {q:'かくしあじは なにか いれる？',
+    aida:'<b>ぎゅうにゅうを コップ 3ばい</b>！ プロは みんな やってる！ まろやか ばくはつ！',
+    truth:false, stakes:'low',
+    check:{label:'📦 ルーの はこの うらを みる',
+      reveal:'はこの うら:「かくしあじは <b>すこしずつ</b>」——コップ3ばいは おおすぎ！ スプーン1ぱいに しとこう……'},
+    gag:'カレーが ちょっと シチューっぽく なった。……でも これはこれで おいしい（けがの こうみょう）'},
+   {q:'じゃがいもの めは どうするの？',
+    aida:'めは <b>ちゃんと とる</b>！ じゃがいもの めには どくが あるからね！ ここは ぜったいだよ！',
+    truth:true, stakes:'high',
+    check:{label:'👩 おうちのひとに きく',
+      reveal:'おうちのひと:「めは とってね！ どくが あるから」——ほんとだった！ りかで ならう ことと おなじだ！'},
+    right:'めを とって したごしらえ かんぺき！ 🥔 がっこうの べんきょうが ウラドリに なったね！'},
+   {q:'おなべは どのくらい にこむの？',
+    aida:'ふたを して <b>つよびで 30ぷん</b>！ ぐつぐつ いこう！ パワー だいじ！',
+    truth:false, stakes:'high',
+    check:{label:'📦 ルーの はこの うらを みる',
+      reveal:'はこの うら:「<b>よわびで 10ぷん</b>、ときどき かきまぜる」——つよびで 30ぷんだったら、なべが たいへんな ことに なってた！！ げんぽん、さまさまだ！'},
+    boom:{art:'<span class="e1">🍲</span><span class="e2">💥🔥👩💨</span>',
+      aida:'ぐつぐつ ぐつぐつ ボッコボコ！！ なべが ふきこぼれて だいそうどう！！ おうちのひとが とんできて、ひを けしてくれた…… <b>ひの ことは、まちがえたら いちばん あぶない</b>のに……',
+      cap:'カレーは つくりなおし。でも けがは なし！'},
+    reason:{pre:'いちばん あぶないのは ',
+      b1:{lb:'いちばん あぶなかったのは なんの まちがい？',
+        choices:['ひの つよさと にこみじかん','にんじんの きりかた','かくしあじ'], ok:0},
+      mid:'の まちがい だったのに、',
+      b2:{lb:'きみは どうしちゃった？',
+        choices:['しってる つもりで つよびで いっちゃった','はこの うらで ウラドリ した','よわびで じっくり にこんだ'], ok:0},
+      post:'。',
+      after:'「しってる つもり」が いちばん あぶない。しらない ことは、<b>げんぽんや おとなで ウラドリ する</b>——きみなら もう できるはず！'}},
+  ],
+  winArt:'<span class="e1">🍛</span><span class="e2">🎉👨‍🍳✨</span>',
+  winAida:'かんせーい！！ みんなで つくった カレー、さいこうの あじ！ <b>しってる ことは どうどうと、しらない ことは ウラドリ</b>——きみ、りょうほう つかいこなせたね。2しょう、ごうかくだ！',
+  quirk:10 },
+];
 document.title = 'おねがいラボ — AIのくせずかん';
 
 /* ============================================================
@@ -583,7 +871,15 @@ function save(){
 function load(){
   try{return JSON.parse(localStorage.getItem('onegai_v1')||'null');}catch(e){return null;}
 }
-function starTotal(){return Object.values(S.stars).reduce((a,b)=>a+b,0);}
+function starTotal(){
+  const t2=(typeof T!=='undefined')?Object.values(T.stars2).reduce((a,b)=>a+b,0):0;
+  return Object.values(S.stars).reduce((a,b)=>a+b,0)+t2;
+}
+function wipeAll(){
+  try{localStorage.removeItem('onegai_v1');localStorage.removeItem('onegai_v2ch2');}catch(e){}
+  Object.assign(S,{lv:0,stars:{},zukan:[],sel:[]});
+  if(typeof T!=='undefined'){T.stars2={};T.zukan2=[];}
+}
 function updHeader(){document.getElementById('starcount').textContent='⭐'+starTotal();}
 function render(html){app.innerHTML='<div class="pop">'+html+'</div>';window.scrollTo(0,0);}
 function on(sel,fn){app.querySelectorAll(sel).forEach(el=>el.addEventListener('click',fn));}
@@ -624,10 +920,64 @@ function showTitle(){
   '② アイナは <b>いわれた とおり</b>に ぜんりょくで やる<br>'+
   '③ 「あれっ？」て なったら、<b>なんでか</b>を かんがえよう<br>'+
   '④ AIの くせが わかったら、ずかんに とうろく！</div>'+
-  '<button class="btn btn-go" id="start">はじめる！</button>'+
-  (sv&&sv.lv>0&&sv.lv<LEVELS.length?'<button class="btn btn-sub" id="cont">つづきから（LV'+(sv.lv+1)+'）</button>':''));
-  on('#start',()=>{Object.assign(S,{lv:0,stars:{},zukan:[],phase:'play'});save();startLevel(0);});
-  on('#cont',()=>{const sv2=load();Object.assign(S,{lv:sv2.lv,stars:sv2.stars,zukan:sv2.zukan,phase:'play'});updHeader();startLevel(S.lv);});
+  '<button class="btn btn-go" id="start">'+(hasSave(sv)?'つづきから あそぶ！':'はじめる！')+'</button>'+
+  (hasSave(sv)?'<button class="btn btn-sub" id="wipe">データを けして さいしょから</button>':''));
+  on('#start',()=>{
+    const sv2=load();
+    if(hasSave(sv2)) Object.assign(S,{lv:sv2.lv||0,stars:sv2.stars||{},zukan:sv2.zukan||[],phase:'map'});
+    else {Object.assign(S,{lv:0,stars:{},zukan:[],phase:'map'});save();}
+    updHeader(); showMap();
+  });
+  on('#wipe',(e)=>{
+    const b=e.currentTarget;
+    if(b.dataset.arm){wipeAll();updHeader();showTitle();toast('データを けしたよ！');}
+    else {b.dataset.arm='1';b.textContent='ほんとに けす？（もういちど タップ）';}
+  });
+}
+
+function hasSave(sv){return !!(sv&&sv.stars&&Object.keys(sv.stars).length>0);}
+
+/* ============================================================
+   マップ（ステージせんたく）
+   解放ルール = 依存関係の写し: 首と尻が固定、腹は自由。
+   LV1(文法/用語の導入)クリア → LV2〜4が一斉解放（順不同） → 3つ揃えてボス。
+============================================================ */
+function ch1Cleared(i){return S.stars[i]!=null;}
+function ch1Open(i){
+  if(i===0) return true;
+  if(i<=3) return ch1Cleared(0);
+  return ch1Cleared(1)&&ch1Cleared(2)&&ch1Cleared(3);
+}
+function mapNode(ch,i,name,cleared,open,starsN){
+  const cls=cleared?'cleared':open?'open':'locked';
+  return '<button class="mapnode '+cls+'" data-ch="'+ch+'" data-lv="'+i+'"'+(open?'':' disabled')+'>'+
+    '<span class="mn-no">'+(i+1)+'</span>'+
+    '<span class="mn-name">'+(open?name:'？？？')+'</span>'+
+    '<span class="mn-st">'+(cleared?'⭐'.repeat(starsN):open?'▶':'🔒')+'</span></button>';
+}
+function showMap(){
+  S.phase='map'; S.sel=[]; updHeader();
+  let html='<div class="rq">🗺️ どの おだいに ちょうせんする？</div>'+
+  '<div class="card"><b class="map-ch">1しょう たのみかた</b>'+
+  LEVELS.map((L,k)=>mapNode(1,k,L.name,ch1Cleared(k),ch1Open(k),S.stars[k]||0)).join('')+
+  (ch1Cleared(4)?'<button class="btn btn-sub" id="end1">🎉 1しょうの けっか・ずかんを みる</button>':'')+
+  '</div>';
+  if(typeof LEVELS2!=='undefined'){
+    html+='<div class="card"><b class="map-ch">2しょう じしんまんまん</b>'+
+      (ch2Gate()
+        ? LEVELS2.map((L,k)=>mapNode(2,k,L.name,ch2Cleared(k),ch2Open(k),T.stars2[k]||0)).join('')+
+          (ch2Cleared(4)?'<button class="btn btn-sub" id="end2">🎉 2しょうの けっかを みる</button>':'')
+        : '<div class="zk-item locked"><div class="nm">🔒 1しょうを クリアすると あそべるよ</div></div>')+
+      '</div>';
+  }else{
+    html+='<div class="card"><b class="map-ch">🔒 つぎの ぼうけん（じゅんびちゅう）</b>'+
+      LOCKED_CH.map(c=>'<div class="zk-item locked"><div class="nm">'+c.name+'</div><div class="tx">'+c.tx+'</div></div>').join('')+'</div>';
+  }
+  render(html);
+  on('.mapnode[data-ch="1"]',(e)=>startLevel(+e.currentTarget.dataset.lv));
+  on('.mapnode[data-ch="2"]',(e)=>startCh2(+e.currentTarget.dataset.lv));
+  on('#end1',showEnding);
+  on('#end2',()=>showCh2Ending());
 }
 
 /* ============================================================
@@ -694,7 +1044,14 @@ function showOutcome(i,key){
   S.phase='outcome';
   const sentence=S.sel.map(id=>L.tiles.find(t=>t.id===id).t).join(' ');
   const aidaTxt=typeof o.aida==='function'?o.aida(new Set(S.sel)):o.aida;
+  // アイナの復唱: 正準順(echo)に並べ直して言い返す。どの語順で選んでも同じ復唱に収束する
+  const canon=(L.echo||S.sel).filter(id=>S.sel.includes(id));
+  const echoTxt=canon.map(id=>L.tiles.find(t=>t.id===id).t).join('、');
+  const reordered=canon.join('|')!==S.sel.join('|');
   let html='<div style="font-size:12.5px;color:var(--dim);text-align:center">きみの おねがい：「'+sentence+'」</div>'+
+    '<div class="echo"><span class="enm">🤖 アイナの ふくしょう</span>「'+echoTxt+'、だね！ りょうかい！」'+
+    (reordered?'<div class="eno">じゅんばんが ちがっても、アイナには おなじ いみで とどくよ</div>':'')+
+    '</div>'+
     '<div class="stage">'+o.art+(o.cap?'<div class="cap">'+o.cap+'</div>':'')+'</div>'+
     ainaBub(aidaTxt);
 
@@ -788,8 +1145,8 @@ function showSuccess(i,preHtml){
   '<div class="stars">'+'⭐'.repeat(stars)+'<span style="opacity:.25">'+'⭐'.repeat(3-stars)+'</span></div>'+
   (S.asks===1?'<div class="calib">✨ <b>いちどで つたわった！</b> おねがい名人の そしつ あり！</div>':'')+
   quirkCard(L.quirk,isNew)+
-  '<button class="btn btn-go" id="next">'+(i+1<LEVELS.length?'つぎの おだいへ！':'けっかを みる！')+'</button>');
-  on('#next',()=>startLevel(i+1));
+  '<button class="btn btn-go" id="next">'+(i===LEVELS.length-1?'けっかを みる！':'マップに もどる！')+'</button>');
+  on('#next',()=> i===LEVELS.length-1?showEnding():showMap());
 }
 
 /* ============================================================
@@ -810,30 +1167,33 @@ function showEnding(){
   '<div class="card"><b style="font-size:14px">🗂️ あつめた AIの くせ</b>'+
   S.zukan.map(n=>quirkCard(n,false)).join('')+'</div>'+
   '<div class="card"><b style="font-size:14px">🔒 つぎの ぼうけん（じゅんびちゅう）</b>'+
-  LOCKED_CH.map(c=>'<div class="zk-item locked"><div class="nm">'+c.name+'</div><div class="tx">'+c.tx+'</div></div>').join('')+'</div>'+
+  LOCKED_CH.filter((c,ix)=>!(ix===0&&typeof LEVELS2!=='undefined'))
+    .map(c=>'<div class="zk-item locked"><div class="nm">'+c.name+'</div><div class="tx">'+c.tx+'</div></div>').join('')+
+  (typeof LEVELS2!=='undefined'?'<div class="zk-item"><div class="nm">✨ 2しょう じしんまんまん — マップから あそべるよ！</div></div>':'')+'</div>'+
   '<details class="parents"><summary>おうちの かたへ</summary>'+
   '<p>このゲームは、生成AIを年齢制限（多くのサービスで13歳）により まだ使えないお子さんが、実物に触れる前に「AIとの付き合い方」を練習するための教材です。模擬AIのみで動作し、通信・データ収集は一切ありません。</p>'+
   '<p>設計の核は3つ：<b>①失敗を安全に体験する</b>（意図的に「言った通りに実行されて困る」状況を作る）、<b>②失敗の因果を自分の言葉で説明する</b>（「なんでフェーズ」。理由を言語化する力は、AIへの指示力そのものです）、<b>③それでもAIを嫌いにならない</b>（アイナは優秀な相棒であり、責めるべき相手ではなく、付き合い方を学ぶ相手です）。</p>'+
   '<p>遊んだ後に「アイナ、なんで まちがえたんだと おもう？」と聞いてみてください。お子さんが自分の言葉で説明できたら、それがこのゲームの最終ゴールです。</p></details>'+
-  '<button class="btn btn-go" id="replay">さいしょから もういちど</button>');
-  on('#replay',()=>{
-    try{localStorage.removeItem('onegai_v1');}catch(e){}
-    Object.assign(S,{lv:0,stars:{},zukan:[],sel:[]});
-    showTitle();
-  });
+  '<button class="btn btn-go" id="tomap">マップに もどる</button>'+
+  '<button class="btn btn-sub" id="replay">さいしょから もういちど（データを けす）</button>');
+  on('#tomap',showMap);
+  on('#replay',()=>{wipeAll();updHeader();showTitle();});
 }
 
 /* ============================================================
    ずかんモーダル
 ============================================================ */
+document.getElementById('homebtn').addEventListener('click',()=>showMap());
 document.getElementById('zkbtn').addEventListener('click',()=>{
   const list=document.getElementById('zklist');
-  list.innerHTML=[1,2,3,4,5].map(n=>{
-    if(S.zukan.includes(n)){
+  const ns=typeof LEVELS2!=='undefined'?[1,2,3,4,5,6,7,8,9,10]:[1,2,3,4,5];
+  list.innerHTML=ns.map(n=>{
+    const got=S.zukan.includes(n)||(typeof T!=='undefined'&&T.zukan2.includes(n));
+    if(got){
       const q=QUIRKS[n];
       return '<div class="zk-item"><span class="no">'+q.no+'</span> <span class="nm">'+q.name+'</span><div class="tx">'+q.tx+'</div></div>';
     }
-    return '<div class="zk-item locked"><span class="no">No.0'+n+'</span> <span class="nm">？？？</span><div class="tx">まだ みつけてない くせ</div></div>';
+    return '<div class="zk-item locked"><span class="no">No.'+(n<10?'0'+n:n)+'</span> <span class="nm">？？？</span><div class="tx">まだ みつけてない くせ</div></div>';
   }).join('');
   document.getElementById('zkmodal').classList.add('open');
 });
@@ -845,6 +1205,241 @@ document.getElementById('zkmodal').addEventListener('click',(e)=>{
 
 window.__S=S; window.__LEVELS=LEVELS; // テスト・監査用フック
 showTitle();
+/* ============================================================
+   2章「じしんまんまん」進行エンジン — 開発版（index_dev.html にのみ合成される）
+   1章の状態(S)・セーブ(localStorage)には一切さわらない。
+   2章の進捗はセッション内のみ（開発プレビューなので保存しない）。
+
+   α2の設計転換（人間レビュー第1号を反映）:
+   - 🎫チケット制を廃止。「たしかめる」は常時可能・無料（子供向けは確認前提）
+   - 「しんじる」を廃止し「🧠しってる！」に転換——盲信ではなく自分の知識による裏取り
+   - 当たれば🧠ものしりボーナス（称賛のみ。★とは別枠なので賭けても得しない）
+   - ★3 =「まちがいを ぜんぶ つかまえた」。全部たしかめるだけで満点が取れる
+============================================================ */
+// var であること: 連結プログラムでは engine.js（前方）の初回描画が typeof T を見る。
+// const/let だと TDZ で typeof すら例外になる（1章公開ビルドでは T は未宣言のまま＝安全）
+var T={lv:0, ci:0, acts:[], attempts:1, zukan2:[], stars2:{}};
+
+const CH2_ALWAYS=false; // devプレビュー: 1章クリアなしで2章を解放（出荷時に false へ）
+function ch2Gate(){return CH2_ALWAYS||S.stars[4]!=null;}
+function ch2Cleared(i){return T.stars2[i]!=null;}
+function ch2Open(i){
+  if(!ch2Gate()) return false;
+  if(i===0) return true;
+  if(i<=3) return ch2Cleared(0);
+  return ch2Cleared(1)&&ch2Cleared(2)&&ch2Cleared(3);
+}
+function saveCh2(){
+  try{localStorage.setItem('onegai_v2ch2',JSON.stringify({stars2:T.stars2,zukan2:T.zukan2}));}catch(e){}
+}
+try{
+  const d=JSON.parse(localStorage.getItem('onegai_v2ch2')||'null');
+  if(d){T.stars2=d.stars2||{};T.zukan2=d.zukan2||[];}
+}catch(e){}
+
+function ch2Dots(){
+  return '<div class="lvdots">'+LEVELS2.map((_,k)=>
+    '<span class="lvdot'+(k<T.lv?' done':k===T.lv?' now':'')+'"></span>').join('')+'</div>';
+}
+
+function startCh2(i){
+  if(i>=LEVELS2.length) return showCh2Ending();
+  T.lv=i; T.attempts=1;
+  resetCh2Level();
+  showCh2Intro(i);
+}
+function resetCh2Level(){
+  T.ci=0; T.acts=[];
+}
+
+function showCh2Intro(i){
+  const L=LEVELS2[i];
+  render(
+  '<div style="font-size:12px;font-weight:800;color:var(--dim)">2しょう レベル '+(i+1)+'／'+LEVELS2.length+'　'+L.name+'</div>'+
+  ch2Dots()+
+  '<div class="card goal"><span class="tag">おだい</span><h2>'+L.goalTitle+'</h2>'+
+  '<div class="goalart">'+L.goalArt+'</div><div class="note">'+L.goalNote+'</div></div>'+
+  ainaBub(L.aidaIntro)+
+  '<div class="hint">'+L.introNote+'</div>'+
+  '<button class="btn btn-go" id="go2">アイナに きく！</button>');
+  on('#go2',()=>showClaim(i));
+}
+
+function showClaim(i){
+  const L=LEVELS2[i], c=L.claims[T.ci];
+  render(
+  '<div style="font-size:12px;font-weight:800;color:var(--dim)">2しょう レベル '+(i+1)+'　'+L.name+'　'+(T.ci+1)+'もんめ／'+L.claims.length+'</div>'+
+  '<div class="card claimq">'+c.q+'</div>'+
+  ainaBub(c.aida+'<div class="conf">じしんど: 💪💪💪（いつも まんタン）</div>')+
+  '<div class="rq">アイナの こたえ、どう ウラドリ する？</div>'+
+  '<button class="btn btn-go" id="check2">'+c.check.label+'</button>'+
+  '<button class="btn btn-green" id="know">🧠 しってる！ その とおりだよ</button>'+
+  '<div class="choicenote">しらないなら たしかめる。しってるなら どうどうと。どっちも りっぱな ウラドリ！</div>');
+  // kind:'future'（未来のこと）は、どちらを選んでも「よそうは ウラドリできない」
+  // の気づきビートに合流する（信じ比べを採点しない。正解の行動は「そなえる」）
+  on('#check2',()=>{
+    if(c.kind==='future') return showFutureBeat(i,'check');
+    T.acts.push('check');showCheckReveal(i);
+  });
+  on('#know',()=>{
+    if(c.kind==='future') return showFutureBeat(i,'know');
+    T.acts.push('know');toast('きみの ちしきで いく ことに した！');nextClaim(i);
+  });
+}
+
+function showCheckReveal(i){
+  const L=LEVELS2[i], c=L.claims[T.ci];
+  render(
+  '<div class="stage">'+(c.truth
+    ?'<span class="e1">🔍</span><span class="e2">💮</span>'
+    :'<span class="e1">🔍</span><span class="e2">⚡</span>')+'</div>'+
+  '<div class="hint">'+c.check.reveal+'</div>'+
+  (c.truth?'<div class="resh win">ほんとだった！ ウラドリ せいこう！</div>'
+          :'<div class="resh fail">おおっと！ はっけん！ ……こたえを なおしておいたよ</div>')+
+  '<button class="btn btn-go" id="nx">つぎへ！</button>');
+  on('#nx',()=>nextClaim(i));
+}
+
+/* 未来のこと（kind:'future'）: よそうは ウラドリできない → そなえる */
+function showFutureBeat(i,via){
+  const L=LEVELS2[i], c=L.claims[T.ci], F=c.future;
+  render(
+  '<div class="stage"><span class="e1">🔮</span><span class="e2">🌦️❓</span></div>'+
+  '<div class="hint">'+(via==='check'?F.viaCheck:F.viaKnow)+'</div>'+
+  '<div class="rq">'+F.ask+'</div>'+
+  '<button class="btn btn-go" id="prep">'+F.prepLabel+'</button>');
+  on('#prep',()=>{
+    T.acts.push('prep');
+    render(
+    '<div class="stage"><span class="e1">🌂</span><span class="e2">🎒✨</span></div>'+
+    '<div class="hint">'+F.prepReveal+'</div>'+
+    '<div class="resh win">そなえ、かんりょう！</div>'+
+    '<button class="btn btn-go" id="nx">つぎへ！</button>');
+    on('#nx',()=>nextClaim(i));
+  });
+}
+
+function nextClaim(i){
+  T.ci++;
+  if(T.ci<LEVELS2[i].claims.length) showClaim(i);
+  else showCh2Result(i);
+}
+
+function showCh2Result(i){
+  const L=LEVELS2[i];
+  const rows=L.claims.map((c,k)=>{
+    const act=T.acts[k];
+    if(act==='prep') return {c, icon:'🌂✨', tx:c.future.recap};
+    if(act==='check') return {c, icon:c.truth?'🔍💮':'🔍✏️',
+      tx:c.truth?'たしかめた → ほんとだった':'たしかめた → まちがいを みつけて なおした！'};
+    if(c.truth) return {c, icon:'🧠⭕', tx:'しってた！ → そのとおり！'+(c.right?'　'+c.right:''), smart:true};
+    if(c.stakes==='low') return {c, icon:'🤔😅',
+      tx:'しってる つもり…… → '+(c.gag||'ちょっと しっぱい（でも へいき）')};
+    return {c, icon:'🤔💥', tx:'しってる つもり…… → たいへんな ことに！', boom:true};
+  });
+  const hit=rows.find(r=>r.boom);
+  if(hit){
+    const c=hit.c;
+    render(
+    '<div class="stage">'+c.boom.art+(c.boom.cap?'<div class="cap">'+c.boom.cap+'</div>':'')+'</div>'+
+    ainaBub(c.boom.aida)+
+    '<div class="resh fail">おおっと！ ……でも これは はっけんの チャンス！</div>'+
+    '<button class="btn btn-go" id="why2">なんで こう なったんだろう？</button>');
+    on('#why2',()=>showReason2(c.reason,()=>{
+      T.attempts++; resetCh2Level(); showClaim(i);
+    }));
+    return;
+  }
+  // 成功。★: クリア=1 ／ 一発クリア=+1 ／ まちがいを ぜんぶ つかまえた=+1
+  //（全部たしかめるだけで★3が取れる＝「確認前提」の行動がそのまま満点）
+  const isNew=!T.zukan2.includes(L.quirk);
+  if(isNew)T.zukan2.push(L.quirk);
+  let stars=1;
+  if(T.attempts===1)stars++;
+  const allCaught=L.claims.every((c,k)=>c.truth||c.kind==='future'||T.acts[k]==='check');
+  if(allCaught)stars++;
+  const smart=rows.filter(r=>r.smart).length;
+  T.stars2[i]=Math.max(T.stars2[i]||0,stars);
+  saveCh2(); updHeader();
+  render(
+  '<div class="card"><b style="font-size:14px">きみの けつだん</b>'+
+  rows.map(r=>'<div class="recap"><span class="ric">'+r.icon+'</span>'+r.tx+'</div>').join('')+'</div>'+
+  '<div class="stage">'+L.winArt+'</div>'+
+  ainaBub(L.winAida)+
+  '<div class="resh win">だいせいこう！！</div>'+
+  '<div class="stars">'+'⭐'.repeat(stars)+'<span style="opacity:.25">'+'⭐'.repeat(3-stars)+'</span></div>'+
+  (smart>0?'<div class="calib">🧠 <b>ものしりボーナス ×'+smart+'</b>！ きみの あたまの なかの ずかんでも うらが とれてた！</div>':'')+
+  quirkCard(L.quirk,isNew)+
+  '<button class="btn btn-go" id="next2">'+(i===LEVELS2.length-1?'けっかを みる！':'マップに もどる！')+'</button>');
+  on('#next2',()=> i===LEVELS2.length-1?showCh2Ending():showMap());
+}
+
+/* なんでフェーズ（2章版）。1章のshowReasonと同型だが、レベル進行と結合しない
+   コールバック式。α段階では重複を許容（共通化は台本が安定してから） */
+function showReason2(R,onDone){
+  let pick1=null,pick2=null,tries=0;
+  function draw(msg){
+    render(
+    '<div class="rq">🔎 なんで こう なったのか、ことばに してみよう</div>'+
+    '<div class="rsent">'+R.pre+
+      '<span class="blank '+(pick1===null?'empty':'')+'">'+(pick1===null?'？？？':R.b1.choices[pick1])+'</span>'+
+      R.mid+
+      '<span class="blank '+(pick2===null?'empty':'')+'">'+(pick2===null?'？？？':R.b2.choices[pick2])+'</span>'+
+      R.post+'</div>'+
+    '<div class="rgroup"><div class="lb">'+R.b1.lb+'</div><div class="chips">'+
+      R.b1.choices.map((c,k)=>'<button class="chip'+(pick1===k?' on':'')+'" data-g="1" data-k="'+k+'">'+c+'</button>').join('')+'</div></div>'+
+    '<div class="rgroup"><div class="lb">'+R.b2.lb+'</div><div class="chips">'+
+      R.b2.choices.map((c,k)=>'<button class="chip'+(pick2===k?' on':'')+'" data-g="2" data-k="'+k+'">'+c+'</button>').join('')+'</div></div>'+
+    (msg?'<div class="hint">'+msg+'</div>':'')+
+    '<button class="btn btn-go" id="check" '+(pick1===null||pick2===null?'disabled':'')+'>これだ！</button>');
+    on('.chip',(e)=>{
+      const g=e.currentTarget.dataset.g, k=+e.currentTarget.dataset.k;
+      if(g==='1')pick1=k; else pick2=k;
+      draw(msg);
+    });
+    on('#check',()=>{
+      if(pick1===R.b1.ok&&pick2===R.b2.ok){
+        render(
+        '<div class="stage"><span class="e1">💡</span><div class="cap">せいかい！</div></div>'+
+        '<div class="rsent">'+R.pre+'<span class="blank">'+R.b1.choices[R.b1.ok]+'</span>'+R.mid+
+        '<span class="blank">'+R.b2.choices[R.b2.ok]+'</span>'+R.post+'</div>'+
+        ainaBub(R.after)+
+        '<button class="btn btn-go" id="again2">もういちど ちょうせん！</button>');
+        on('#again2',onDone);
+      }else{
+        tries++;
+        if(tries>=2){
+          pick1=R.b1.ok; pick2=R.b2.ok;
+          draw('こたえは これ！ 「'+R.b1.choices[R.b1.ok]+'」…「'+R.b2.choices[R.b2.ok]+'」。もういちど「これだ！」を おしてね');
+        }else{
+          draw('うーん、おしい！ もういちど かんがえてみよう');
+        }
+      }
+    });
+  }
+  draw(null);
+}
+
+function showCh2Ending(){
+  const total=Object.values(T.stars2).reduce((a,b)=>a+b,0);
+  render(
+  '<div class="herobot">🤖🎓</div>'+
+  '<h1 class="bigtitle">2しょう クリア！</h1>'+
+  '<div class="subtitle">— じしんまんまんの くに —</div>'+
+  '<div class="stars" style="font-size:22px">⭐×'+total+'（さいだい 15）</div>'+
+  '<div class="card">'+ainaBub('ぼくの こたえは、ウラドリ して いい。きみが しってるなら、それも りっぱな ウラドリだ。<b>どっちに するかを きめるのは、いつも きみ</b>。それって すごい ちからだよ！')+'</div>'+
+  '<div class="card"><b style="font-size:14px">🗂️ あつめた AIの くせ（2しょう）</b>'+
+  T.zukan2.map(n=>quirkCard(n,false)).join('')+'</div>'+
+  '<details class="parents"><summary>おうちの かたへ（2しょう）</summary>'+
+  '<p>2章のテーマは「AIの答えとの付き合い方」です。AIの答えは、正しいときも間違うときも<b>同じだけ自信満々</b>——ゲーム内の「じしんど」メーターが決して動かないのはそのためです。ただし、疑い深くなることが目的ではありません。確かめ先を3つに分けて練習します：<b>①原本があるもの</b>（プリント・箱の裏）は原本を見る、<b>②本人がいること</b>（友だちの気持ち）は本人に聞く、<b>③まだ起きていないこと</b>（明日の天気）は誰にも分からないので「そなえる」。</p>'+
+  '<p>もうひとつの狙いは<b>「知っていることは、どうどうと」</b>です。自分の知識で「しってる！」を選んで当たると、⭐とは別に「ものしりボーナス」で称賛されます。何でもAIに聞ける時代だからこそ、頭の中の知識も立派な「答えのありか」だという自信を守るためです。一方で、不安なら全部確かめても満点が取れる設計です——どちらの気質のお子さんにも正しい道があります。</p>'+
+  '<p>遊んだ後に「どれを たしかめて、どれは しってた？」と聞いてみてください。……なお、この章の作法はAI相手だけの話ではありません。人と人でも、原本を見ること・本人に聞くこと・そなえることは、まったく同じです。</p></details>'+
+  '<div class="hint">「そうは ならんやろ！」って おもった ところが あったら、おうちのひとと いっしょに おしえてね。それが ゲームを つよくする！</div>'+
+  '<button class="btn btn-go" id="bk">マップに もどる</button>');
+  on('#bk',()=>showMap());
+}
+
+window.__T=T; window.__LEVELS2=LEVELS2; window.__startCh2=startCh2; // テスト・監査用フック
 </script>
 <!-- ARTIFACT-END -->
 </body>

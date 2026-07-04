@@ -20,8 +20,23 @@
   .logo{font-weight:800; font-size:15px; letter-spacing:.02em}
   .logo span{color:var(--robo)}
   #starcount{margin-left:auto; font-weight:800; color:#C99414; font-size:15px}
-  #zkbtn{background:var(--card); border:2px solid var(--line); border-radius:99px;
+  #zkbtn,#homebtn{background:var(--card); border:2px solid var(--line); border-radius:99px;
     padding:4px 14px; font-size:13.5px; font-weight:700; color:var(--dim)}
+
+  /* ---- map（ステージせんたく） ---- */
+  .map-ch{font-size:14px; display:block; margin-bottom:8px}
+  .mapnode{display:flex; align-items:center; gap:10px; width:100%;
+    background:var(--bg); border:2px solid var(--line); border-radius:14px;
+    padding:10px 14px; margin-bottom:8px; font-weight:800; text-align:left}
+  .mapnode .mn-no{flex:none; width:30px; height:30px; border-radius:50%;
+    background:var(--robo-bg); color:var(--robo); display:flex; align-items:center;
+    justify-content:center; font-size:14px}
+  .mapnode .mn-name{flex:1; font-size:14.5px; min-width:0}
+  .mapnode .mn-st{font-size:13px; letter-spacing:.05em}
+  .mapnode.cleared{border-color:var(--sun); background:#FFFBEE}
+  .mapnode.cleared .mn-no{background:#FFF3D1; color:#B08514}
+  .mapnode.open{border-color:var(--robo); background:var(--card)}
+  .mapnode.locked{opacity:.45}
 
   .wrap{max-width:640px; margin:0 auto; padding:18px 16px 80px}
   @keyframes pop{0%{opacity:0; transform:scale(.92) translateY(8px)}
@@ -78,6 +93,14 @@
   .btn-sub{background:var(--card); border:2px solid var(--line); color:var(--dim);
     font-size:14px; font-weight:700; box-shadow:0 3px 0 rgba(120,150,180,.1)}
   .btn-green{background:var(--green); color:#fff; box-shadow:0 4px 0 #3D9A6B}
+
+  /* ---- echo（アイナの復唱） ---- */
+  .echo{background:var(--robo-bg); border:2px solid var(--robo); border-radius:12px;
+    padding:8px 12px; font-size:13.5px; font-weight:700; margin:10px 0 2px;
+    text-align:center}
+  .echo .enm{display:block; font-size:11px; font-weight:800; color:var(--robo);
+    letter-spacing:.06em}
+  .echo .eno{font-size:11.5px; color:var(--dim); font-weight:600; margin-top:2px}
 
   /* ---- stage / result ---- */
   .stage{background:linear-gradient(180deg,#FFFDF5,#FFF6E3); border:2px solid #F2E3BD;
@@ -148,6 +171,17 @@
     border-radius:14px; padding:12px 16px; margin:14px 0; font-size:13.5px}
   details.parents summary{font-weight:800; cursor:pointer; color:var(--dim)}
   details.parents p{margin-top:8px; color:var(--ink)}
+
+  /* ---- 2章（たしかめる/しってる） ---- */
+  .claimq{font-size:15px; font-weight:700}
+  .choicenote{font-size:12px; color:var(--dim); text-align:center;
+    margin:12px 2px 0; line-height:1.7}
+  .conf{font-size:11px; color:var(--dim); margin-top:4px}
+  .devtag{background:var(--coral); color:#fff; font-size:10px; border-radius:99px;
+    padding:1px 8px; vertical-align:middle}
+  .recap{font-size:13.5px; padding:6px 2px; border-bottom:1px dashed var(--line)}
+  .recap:last-child{border-bottom:none}
+  .recap .ric{margin-right:6px}
 
   #toast{position:fixed; left:50%; bottom:24px; transform:translateX(-50%);
     background:var(--ink); color:#fff; font-weight:800; font-size:14px;

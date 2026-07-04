@@ -36,6 +36,7 @@ const LEVELS = [
     {id:'make', t:'つくって'},
     {id:'size', t:'テーブルに のる おおきさで'},
   ],
+  echo:['cake','size','sugoi','make'], // 復唱の正準順（どの語順で選んでも同じ復唱に収束する）
   eval(s){
     if(!s.has('make')) return 'noverb';
     if(!s.has('cake')) return 'nowhat';
@@ -83,6 +84,7 @@ const LEVELS = [
     {id:'potato', t:'じゃがいもを 2こ'},
     {id:'roux', t:'カレールーを 1はこ'},
   ],
+  echo:['vague','carrot','potato','roux','buy'],
   eval(s){
     if(!s.has('buy')) return 'noverb';
     const specs=['carrot','potato','roux'].filter(x=>s.has(x)).length;
@@ -144,6 +146,7 @@ const LEVELS = [
     {id:'fetch', t:'とってきて'},
     {id:'loc', t:'まどぎわの いちばん うしろの つくえから'},
   ],
+  echo:['go','loc','mydesk','pencase','fetch'],
   eval(s){
     if(!s.has('fetch')) return 'noverb';
     if(!s.has('pencase')) return 'nowhat';
@@ -192,6 +195,7 @@ const LEVELS = [
     {id:'stranger', t:'しらない ひとには'},
     {id:'dontopen', t:'でないで'},
   ],
+  echo:['anyone','courier','receive','stranger','dontopen','sayrusu'],
   eval(s){
     // 節の成立を先に判定する: つくり手の想定ではなく、文として読める結合をすべて拾う
     const courierDone=s.has('courier')&&s.has('receive');
@@ -286,6 +290,7 @@ const LEVELS = [
     {id:'keep', t:'しゅくだいと くまさんは'},
     {id:'desk', t:'つくえの うえに おいて'},
   ],
+  echo:['room','allclean','floor','shelf','keep','desk'],
   eval(s){
     if(s.has('floor')&&s.has('shelf')&&s.has('keep')&&s.has('desk')) return 'success';
     if(s.has('allclean')&&s.has('keep')){
